@@ -22,7 +22,7 @@ def pokemon_name():
     if request.method == 'POST':
         pokemon_name = request.form.get('pokemon_name').lower() 
         pokemon_data = get_pokemon_data(pokemon_name)
-    return render_template('pokemon_name.html', title='Pokemon Page', pokemon_data=pokemon_data)
+    return render_template('pokemon.html', title='Pokemon Page', pokemon_data=pokemon_data)
 
 def get_pokemon_data(pokemon_name):
     base_url = "https://pokeapi.co/api/v2/"
@@ -52,6 +52,7 @@ def login():
         password = form.password.data
         queried_user = User.query.filter(User.email == email).first()
         if queried_user and queried_user.check_password(password):
+        #if queried_user and check_password_hash(queried_user.password_hash, password):           #-----DK version------
             login_user(queried_user)
             flash(f'Welcome back {queried_user.first_name}!', 'success')
             return redirect(url_for('home'))
@@ -60,11 +61,55 @@ def login():
             return render_template('login.html', form=form, error=error)
     else:
         print('not validated')
-        return render_template('login.html', form=form)
+        return render_template('login.html', form=form) 
 
 
 
-@app.route('/signup' , methods=['GET', 'POST'])
+######################################################
+
+##########DK signup version##########
+
+app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = SignUpForm()
+    if request.method == 'POST' and form.validate_on_submit():
+
+        #data from signup form
+        user_data = {
+            'first_name': form.first_name.data,
+            'last_name': form.last_name.data,
+            'email': form.email.data.lower(),
+            'password': form.password.data
+        
+        }
+
+        #create new user instance
+        new_user = User()
+
+        #set user_data to our user attributes
+        new_user.from_dict(user_data)
+
+        #save to db
+        db.session.add(new_user)
+        db.session.commit()
+
+
+        flash(f'Thank you for signing up {user_data["first_name"]}!', 'success')
+        return redirect(url_for('login'))
+    else:
+        return render_template('signup.html', form=form)
+
+
+######################################################
+
+
+
+
+
+###########swap out GS version BELOW for DK version###########
+
+"""
+@app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignUpForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -90,7 +135,18 @@ if __name__ == "__main__":
 
 #app = Flask(__name__) RE: ABOVE????
 
-##################
+###########swap out GS version for DK version###########
+
+"""
+
+
+
+
+
+
+
+
+
 
 ###################LOGOUT
 
