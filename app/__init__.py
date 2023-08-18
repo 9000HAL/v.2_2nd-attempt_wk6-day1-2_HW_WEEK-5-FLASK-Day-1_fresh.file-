@@ -26,14 +26,16 @@ def create_app():
 
     #import blueprints
     from app.blueprints.main import main
-
+    from app.blueprints.auth import auth
 
     #register blueprints
     app.register_blueprint(main)
+    app.register_blueprint(auth)
     
     return app
 
 
 
-from app import routes, models
+from app import routes, models      #----dk fix 37:55 rec'g
+
 

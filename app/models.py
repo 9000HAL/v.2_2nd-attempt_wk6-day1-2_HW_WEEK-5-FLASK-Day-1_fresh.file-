@@ -1,25 +1,64 @@
 from app import db, login_manager
 from flask_login import UserMixin
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash #check_password_hash
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
-    password_hash = db.Column(db.String) # Save hashed password.
+    #password_hash = db.Column(db.String) 
+    password_hash = db.Column(db.String, nullable=False) # Save hashed password.
+
+    
     created_on = db.Column(db.DateTime, default=datetime.utcnow())
 
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
 
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+    #this section from template below
+
+    #this section from template below
+    # hashes our password when user signs up
+    def hash_password(self, signup_password):
+        return generate_password_hash(signup_password)
+    
+    # This method will assign our columns with their respective values
+
+    def from_dict(self, user_data):
+        self.first_name = user_data['first_name']
+        self.last_name = user_data['last_name']
+        self.email = user_data['email']
+        self.password_hash = self.hash_password(user_data['password'])    #c4 suggested this change
+
+"""
+    def from_dict(self, user_data):
+        self.first_name = user_data['first_name']
+        self.last_name = user_data['last_name']
+        self.email = user_data['email']
+        self.password = self.hash_password(user_data['password'])
+"""
+
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
+
+
+
+
+
+"""
+
+
+#<!--removed my v.1 set up here commented out below-->
+def set_password(self, password):
+    self.password_hash = generate_password_hash(password)
+
+def check_password(self, password):
+    return check_password_hash(self.password_hash, password)
+
+"""
+
 
 
 

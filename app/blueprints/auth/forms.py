@@ -17,8 +17,3 @@ class SignUpForm(FlaskForm):
     submit_btn = SubmitField('Sign Up')
 
 
-
-
-
-#first_name = StringField('First Name: ', validators=[DataRequired()])
-#last_name = StringField('Last Name: ', validators=[DataRequired()])
