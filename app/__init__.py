@@ -25,14 +25,13 @@ def create_app():
     migrate.init_app(app, db)     
 
     #import blueprints
+    from app.blueprints.main import main
 
 
     #register blueprints
-
+    app.register_blueprint(main)
+    
     return app
-
-
-
 
 
 
