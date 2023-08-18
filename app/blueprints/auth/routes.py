@@ -1,23 +1,18 @@
 from flask import request, render_template, redirect, url_for, flash
 import requests
 from app.forms import LoginForm, SignUpForm
-from app import app, db
+from app import db
+from . import auth
 from app.models import User
 from werkzeug.security import check_password_hash
 from flask_login import login_user, logout_user, current_user, login_required
 
 
 
+#Auth routes
 
 
-
-
-
-
-
-
-
-@app.route('/login', methods=['GET', 'POST'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -25,7 +20,7 @@ def login():
         password = form.password.data
         queried_user = User.query.filter(User.email == email).first()
         if queried_user and queried_user.check_password(password):
-        #if queried_user and check_password_hash(queried_user.password_hash, password):           #-----DK version------
+        #if queried_user and check_password_hash(queried_user.password_hash, password):     #-----DK version------
             login_user(queried_user)
             flash(f'Welcome back {queried_user.first_name}!', 'success')
             return redirect(url_for('home'))
@@ -42,7 +37,7 @@ def login():
 
 ##########DK signup version##########
 
-app.route('/signup', methods=['GET', 'POST'])
+auth.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = SignUpForm()
     if request.method == 'POST' and form.validate_on_submit():
@@ -121,7 +116,7 @@ if __name__ == "__main__":
 
 ###################LOGOUT
 
-@app.route('/logout')
+@auth.route('/logout')
 #@login_required
 def logout():
         logout_user()
